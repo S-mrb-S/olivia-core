@@ -6,17 +6,17 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/olivia-ai/olivia/analysis"
+	"github.com/MehraB832/olivia_core/analysis"
 
-	"github.com/olivia-ai/olivia/training"
+	"github.com/MehraB832/olivia_core/training"
 
-	"github.com/olivia-ai/olivia/dashboard"
+	"github.com/MehraB832/olivia_core/dashboard"
 
-	"github.com/olivia-ai/olivia/modules/spotify"
+	"github.com/MehraB832/olivia_core/modules/spotify"
 
+	"github.com/MehraB832/olivia_core/network"
 	"github.com/gookit/color"
 	"github.com/gorilla/mux"
-	"github.com/olivia-ai/olivia/network"
 	gocache "github.com/patrickmn/go-cache"
 )
 

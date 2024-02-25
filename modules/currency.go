@@ -3,8 +3,8 @@ package modules
 import (
 	"fmt"
 
-	"github.com/olivia-ai/olivia/language"
-	"github.com/olivia-ai/olivia/util"
+	"github.com/MehraB832/olivia_core/language"
+	"github.com/MehraB832/olivia_core/util"
 )
 
 // CurrencyTag is the intent tag for its module

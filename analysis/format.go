@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/olivia-ai/olivia/locales"
+	"github.com/MehraB832/olivia_core/locales"
 
-	"github.com/olivia-ai/olivia/util"
+	"github.com/MehraB832/olivia_core/util"
 	"github.com/tebeka/snowball"
 )
 

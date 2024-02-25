@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/olivia-ai/olivia/locales"
+	"github.com/MehraB832/olivia_core/locales"
 
-	"github.com/olivia-ai/olivia/modules"
-	"github.com/olivia-ai/olivia/util"
+	"github.com/MehraB832/olivia_core/modules"
+	"github.com/MehraB832/olivia_core/util"
 )
 
 var (

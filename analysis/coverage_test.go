@@ -3,8 +3,8 @@ package analysis
 import (
 	"testing"
 
-	"github.com/olivia-ai/olivia/modules"
-	"github.com/olivia-ai/olivia/util"
+	"github.com/MehraB832/olivia_core/modules"
+	"github.com/MehraB832/olivia_core/util"
 )
 
 func TestGetModuleCoverage(t *testing.T) {

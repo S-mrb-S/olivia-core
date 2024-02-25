@@ -1,7 +1,7 @@
 package es
 
 import (
-	"github.com/olivia-ai/olivia/modules"
+	"github.com/MehraB832/olivia_core/modules"
 )
 
 func init() {

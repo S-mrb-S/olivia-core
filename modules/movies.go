@@ -5,10 +5,10 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/olivia-ai/olivia/user"
-	"github.com/olivia-ai/olivia/util"
+	"github.com/MehraB832/olivia_core/user"
+	"github.com/MehraB832/olivia_core/util"
 
-	"github.com/olivia-ai/olivia/language"
+	"github.com/MehraB832/olivia_core/language"
 )
 
 var (

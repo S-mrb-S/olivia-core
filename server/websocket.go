@@ -6,15 +6,15 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/olivia-ai/olivia/locales"
+	"github.com/MehraB832/olivia_core/locales"
 
-	"github.com/olivia-ai/olivia/modules/start"
+	"github.com/MehraB832/olivia_core/modules/start"
 
+	"github.com/MehraB832/olivia_core/analysis"
+	"github.com/MehraB832/olivia_core/user"
+	"github.com/MehraB832/olivia_core/util"
 	"github.com/gookit/color"
 	"github.com/gorilla/websocket"
-	"github.com/olivia-ai/olivia/analysis"
-	"github.com/olivia-ai/olivia/user"
-	"github.com/olivia-ai/olivia/util"
 )
 
 // Configure the upgrader

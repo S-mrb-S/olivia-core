@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/olivia-ai/olivia/util"
+	"github.com/MehraB832/olivia_core/util"
 )
 
 // Country is the serializer of the countries.json file in the res folder

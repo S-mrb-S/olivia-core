@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/MehraB832/olivia_core/analysis"
+	"github.com/MehraB832/olivia_core/network"
+	"github.com/MehraB832/olivia_core/util"
 	"github.com/gookit/color"
-	"github.com/olivia-ai/olivia/analysis"
-	"github.com/olivia-ai/olivia/network"
-	"github.com/olivia-ai/olivia/util"
 )
 
 // TrainData returns the inputs and outputs for the neural network
