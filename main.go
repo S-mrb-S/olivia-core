@@ -54,7 +54,7 @@ func main() {
 	}
 
 	// Serves the server
-	server.Serve(neuralNetworksMapContainer, *serverPortArg)
+	server.StartServer(neuralNetworksMapContainer, *serverPortArg)
 }
 
 // executeModelRetraining retrains the given locales

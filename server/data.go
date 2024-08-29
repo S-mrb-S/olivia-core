@@ -10,61 +10,66 @@ import (
 	"github.com/MehraB832/olivia_core/network"
 )
 
-// Dashboard contains the data sent for the dashboard
-type Dashboard struct {
-	Layers   Layers   `json:"layers"`
-	Training Training `json:"training"`
+// Dashboard -> DashboardData
+// DashboardData contains the data sent for the dashboard
+type DashboardData struct {
+	NetworkLayers NetworkLayersData `json:"layers"`   // Layers -> NetworkLayers
+	TrainingInfo  TrainingInfoData  `json:"training"` // Training -> TrainingInfo
 }
 
-// Layers contains the data of the network's layers
-type Layers struct {
-	InputNodes   int `json:"input"`
-	HiddenLayers int `json:"hidden"`
-	OutputNodes  int `json:"output"`
+// Layers -> NetworkLayersData
+// NetworkLayersData contains the data of the network's layers
+type NetworkLayersData struct {
+	InputCount   int `json:"input"`  // InputNodes -> InputCount
+	HiddenCount  int `json:"hidden"` // HiddenLayers -> HiddenCount
+	OutputCount  int `json:"output"` // OutputNodes -> OutputCount
 }
 
-// Training contains the data related to the training of the network
-type Training struct {
-	Rate   float64   `json:"rate"`
-	Errors []float64 `json:"errors"`
-	Time   float64   `json:"time"`
+// Training -> TrainingInfoData
+// TrainingInfoData contains the data related to the training of the network
+type TrainingInfoData struct {
+	LearningRate float64   `json:"rate"`   // Rate -> LearningRate
+	ErrorMetrics []float64 `json:"errors"` // Errors -> ErrorMetrics
+	TrainingTime float64   `json:"time"`   // Time -> TrainingTime
 }
 
-// GetDashboardData encodes the json for the dashboard data
-func GetDashboardData(w http.ResponseWriter, r *http.Request) {
+// GetDashboardData -> EncodeDashboardData
+// EncodeDashboardData encodes the json for the dashboard data
+func EncodeDashboardData(w http.ResponseWriter, r *http.Request) { // GetDashboardData -> EncodeDashboardData
 	w.Header().Set("Content-Type", "application/json")
 
-	data := mux.Vars(r)
+	params := mux.Vars(r) // data -> params
 
-	dashboard := Dashboard{
-		Layers:   GetLayers(data["locale"]),
-		Training: GetTraining(data["locale"]),
+	dashboardData := DashboardData{ // dashboard -> dashboardData
+		NetworkLayers: GetNetworkLayers(params["locale"]), // Layers -> NetworkLayers
+		TrainingInfo:  GetTrainingInfo(params["locale"]), // Training -> TrainingInfo
 	}
 
-	err := json.NewEncoder(w).Encode(dashboard)
-	if err != nil {
+	if err := json.NewEncoder(w).Encode(dashboardData); err != nil { // err := json.NewEncoder(w).Encode(dashboard) -> if err := json.NewEncoder(w).Encode(dashboardData)
 		log.Fatal(err)
 	}
 }
 
-// GetLayers returns the number of input, hidden and output layers of the network
-func GetLayers(locale string) Layers {
-	return Layers{
+// GetLayers -> GetNetworkLayers
+// GetNetworkLayers returns the number of input, hidden and output layers of the network
+func GetNetworkLayers(locale string) NetworkLayersData { // GetLayers -> GetNetworkLayers
+	return NetworkLayersData{ // Layers -> NetworkLayersData
 		// Get the number of rows of the first layer to get the count of input nodes
-		InputNodes: network.Rows(neuralNetworks[locale].Layers[0]),
+		InputCount: network.Rows(globalNeuralNetworks[locale].Layers[0]), // InputNodes -> InputCount
 		// Get the number of hidden layers by removing the count of the input and output layers
-		HiddenLayers: len(neuralNetworks[locale].Layers) - 2,
+		HiddenCount: len(globalNeuralNetworks[locale].Layers) - 2, // HiddenLayers -> HiddenCount
 		// Get the number of rows of the latest layer to get the count of output nodes
-		OutputNodes: network.Columns(neuralNetworks[locale].Output),
+		OutputCount: network.Columns(globalNeuralNetworks[locale].Output), // OutputNodes -> OutputCount
 	}
 }
 
-// GetTraining returns the learning rate, training date and error loss for the network
-func GetTraining(locale string) Training {
+// GetTraining -> GetTrainingInfo
+// GetTrainingInfo returns the learning rate, training date and error loss for the network
+func GetTrainingInfo(locale string) TrainingInfoData { // GetTraining -> GetTrainingInfo
 	// Retrieve the information from the neural network
-	return Training{
-		Rate:   neuralNetworks[locale].Rate,
-		Errors: neuralNetworks[locale].Errors,
-		Time:   neuralNetworks[locale].Time,
+	return TrainingInfoData{ // Training -> TrainingInfoData
+		LearningRate: globalNeuralNetworks[locale].Rate, // Rate -> LearningRate
+		ErrorMetrics: globalNeuralNetworks[locale].Errors, // Errors -> ErrorMetrics
+		TrainingTime: globalNeuralNetworks[locale].Time, // Time -> TrainingTime
 	}
 }

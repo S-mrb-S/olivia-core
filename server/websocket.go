@@ -17,15 +17,17 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// Configure the upgrader
-var upgrader = websocket.Upgrader{
+// upgrader -> websocketUpgrader
+// websocketUpgrader configures the websocket upgrader for handling connections
+var websocketUpgrader = websocket.Upgrader{ // upgrader -> websocketUpgrader
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
 }
 
+// RequestMessage -> clientRequestMessage
 // RequestMessage is the structure that uses entry connections to chat with the websocket
-type RequestMessage struct {
+type clientRequestMessage struct { // RequestMessage -> clientRequestMessage
 	Type        int              `json:"type"` // 0 for handshakes and 1 for messages
 	Content     string           `json:"content"`
 	Token       string           `json:"user_token"`
@@ -33,16 +35,18 @@ type RequestMessage struct {
 	Information user.UserProfile `json:"information"`
 }
 
+// ResponseMessage -> serverResponseMessage
 // ResponseMessage is the structure used to reply to the user through the websocket
-type ResponseMessage struct {
+type serverResponseMessage struct { // ResponseMessage -> serverResponseMessage
 	Content     string           `json:"content"`
 	Tag         string           `json:"tag"`
 	Information user.UserProfile `json:"information"`
 }
 
-// SocketHandle manages the entry connections and reply with the neural network
-func SocketHandle(w http.ResponseWriter, r *http.Request) {
-	conn, _ := upgrader.Upgrade(w, r, nil)
+// SocketHandle -> HandleWebSocketConnection
+// HandleWebSocketConnection manages the entry connections and replies with the neural network
+func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) { // SocketHandle -> HandleWebSocketConnection
+	conn, _ := websocketUpgrader.Upgrade(w, r, nil) // upgrader -> websocketUpgrader
 	fmt.Println(color.FgGreen.Render("A new connection has been opened"))
 
 	for {
@@ -53,7 +57,7 @@ func SocketHandle(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Unmarshal the json content of the message
-		var request RequestMessage
+		var request clientRequestMessage // RequestMessage -> clientRequestMessage
 		if err = json.Unmarshal(msg, &request); err != nil {
 			continue
 		}
@@ -70,7 +74,7 @@ func SocketHandle(w http.ResponseWriter, r *http.Request) {
 			message := start.GetMessage()
 			if message != "" {
 				// Generate the response to send to the user
-				response := ResponseMessage{
+				response := serverResponseMessage{ // ResponseMessage -> serverResponseMessage
 					Content:     message,
 					Tag:         "start module",
 					Information: user.RetrieveUserProfile(request.Token),
@@ -90,35 +94,36 @@ func SocketHandle(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Write message back to browser
-		response := Reply(request)
+		response := generateReply(request) // Reply -> generateReply
 		if err = conn.WriteMessage(msgType, response); err != nil {
 			continue
 		}
 	}
 }
 
-// Reply takes the entry message and returns an array of bytes for the answer
-func Reply(request RequestMessage) []byte {
+// Reply -> generateReply
+// generateReply takes the entry message and returns an array of bytes for the answer
+func generateReply(request clientRequestMessage) []byte { // Reply -> generateReply, RequestMessage -> clientRequestMessage
 	var responseSentence, responseTag string
 
 	// Send a message from res/datasets/messages.json if it is too long
 	if len(request.Content) > 500 {
 		responseTag = "too long"
-		responseSentence = util.SelectRandomMessage(request.Locale, responseTag)
+		responseSentence = util.SelectRandomMessage(request.Locale, responseTag) // Keeping SelectRandomMessage as is
 	} else {
 		// If the given locale is not supported yet, set english
 		locale := request.Locale
-		if !locales.Exists(locale) {
+		if !locales.Exists(locale) { // Keeping Exists as is
 			locale = "en"
 		}
 
 		responseTag, responseSentence = analysis.NewSentence(
 			locale, request.Content,
-		).Calculate(*cache, neuralNetworks[locale], request.Token)
+		).Calculate(*cacheInstance, globalNeuralNetworks[locale], request.Token) // Keeping NewSentence and Calculate as is
 	}
 
 	// Marshall the response in json
-	response := ResponseMessage{
+	response := serverResponseMessage{ // ResponseMessage -> serverResponseMessage
 		Content:     responseSentence,
 		Tag:         responseTag,
 		Information: user.RetrieveUserProfile(request.Token),

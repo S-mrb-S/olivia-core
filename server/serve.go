@@ -21,42 +21,46 @@ import (
 )
 
 var (
-	// Create the neural network variable to use it everywhere
-	neuralNetworks map[string]network.Network
-	// Initializes the cache with a 5 minute lifetime
-	cache = gocache.New(5*time.Minute, 5*time.Minute)
+	// neuralNetworks -> globalNeuralNetworks
+	// globalNeuralNetworks is a map to hold the neural network instances
+	globalNeuralNetworks map[string]network.Network
+
+	// cache -> cacheInstance
+	// cacheInstance initializes the cache with a 5-minute lifetime
+	cacheInstance = gocache.New(5*time.Minute, 5*time.Minute)
 )
 
-// Serve serves the server in the given port
-func Serve(_neuralNetworks map[string]network.Network, port string) {
+// Serve -> StartServer
+// StartServer initializes the server with the given neural networks and port
+func StartServer(neuralNetworkInstances map[string]network.Network, serverPort string) { // Serve -> StartServer, _neuralNetworks -> neuralNetworkInstances, port -> serverPort
 	// Set the current global network as a global variable
-	neuralNetworks = _neuralNetworks
+	globalNeuralNetworks = neuralNetworkInstances
 
 	// Initializes the router
 	router := mux.NewRouter()
 	router.HandleFunc("/callback", spotify.CompleteAuth)
 	// Serve the websocket
-	router.HandleFunc("/websocket", SocketHandle)
+	router.HandleFunc("/websocket", HandleWebSocketConnection)
 	// Serve the API
-	router.HandleFunc("/api/{locale}/dashboard", GetDashboardData).Methods("GET")
+	router.HandleFunc("/api/{locale}/dashboard", EncodeDashboardData).Methods("GET")
 	router.HandleFunc("/api/{locale}/intent", dashboard.CreateIntent).Methods("POST")
 	router.HandleFunc("/api/{locale}/intent", dashboard.DeleteIntent).Methods("DELETE", "OPTIONS")
-	router.HandleFunc("/api/{locale}/train", Train).Methods("POST")
+	router.HandleFunc("/api/{locale}/train", TrainNeuralNetwork).Methods("POST") // Train -> TrainNeuralNetwork
 	router.HandleFunc("/api/{locale}/intents", dashboard.GetIntents).Methods("GET")
 	router.HandleFunc("/api/coverage", analysis.GetCoverage).Methods("GET")
 
-	magenta := color.FgMagenta.Render
-	fmt.Printf("\nServer listening on the port %s...\n", magenta(port))
+	magentaColor := color.FgMagenta.Render
+	fmt.Printf("\nServer listening on the port %s...\n", magentaColor(serverPort)) // magenta -> magentaColor
 
 	// Serves the chat
-	err := http.ListenAndServe(":"+port, router)
-	if err != nil {
+	if err := http.ListenAndServe(":"+serverPort, router); err != nil { // err := http.ListenAndServe(":"+port, router) -> if err := http.ListenAndServe(":"+serverPort, router)
 		panic(err)
 	}
 }
 
-// Train is the route to re-train the neural network
-func Train(w http.ResponseWriter, r *http.Request) {
+// Train -> TrainNeuralNetwork
+// TrainNeuralNetwork is the route to re-train the neural network
+func TrainNeuralNetwork(w http.ResponseWriter, r *http.Request) { // Train -> TrainNeuralNetwork
 	// Checks if the token present in the headers is the right one
 	token := r.Header.Get("Olivia-Token")
 	if !dashboard.ChecksToken(token) {
@@ -66,10 +70,10 @@ func Train(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	magenta := color.FgMagenta.Render
-	fmt.Printf("\nRe-training the %s..\n", magenta("neural network"))
+	magentaColor := color.FgMagenta.Render
+	fmt.Printf("\nRe-training the %s..\n", magentaColor("neural network")) // magenta -> magentaColor
 
-	for locale := range neuralNetworks {
-		neuralNetworks[locale] = training.CreateNeuralNetwork(locale, true)
+	for locale := range globalNeuralNetworks { // neuralNetworks -> globalNeuralNetworks
+		globalNeuralNetworks[locale] = training.CreateNeuralNetwork(locale, true)
 	}
 }
