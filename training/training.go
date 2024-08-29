@@ -10,8 +10,8 @@ import (
 	"github.com/gookit/color"
 )
 
-// TrainData returns the inputs and outputs for the neural network
-func TrainData(locale string) (inputs, outputs [][]float64) {
+// trainDataMain returns the inputs and outputs for the neural network
+func trainDataMain(locale string) (inputs, outputs [][]float64) {
 	words, classes, documents := analysis.Organize(locale)
 
 	for _, document := range documents {
@@ -30,7 +30,7 @@ func TrainData(locale string) (inputs, outputs [][]float64) {
 }
 
 // CreateNeuralNetwork returns a new neural network which is loaded from res/training.json or
-// trained from TrainData() inputs and targets.
+// trained from trainDataMain() inputs and targets.
 func CreateNeuralNetwork(locale string, ignoreTrainingFile bool) (neuralNetwork network.Network) {
 	// Decide if the network is created by the save or is a new one
 	saveFile := "res/locales/" + locale + "/training.json"
@@ -38,7 +38,7 @@ func CreateNeuralNetwork(locale string, ignoreTrainingFile bool) (neuralNetwork 
 	_, err := os.Open(saveFile)
 	// Train the model if there is no training file
 	if err != nil || ignoreTrainingFile {
-		inputs, outputs := TrainData(locale)
+		inputs, outputs := trainDataMain(locale)
 
 		neuralNetwork = network.CreateNetwork(locale, 0.1, inputs, outputs, 50)
 		neuralNetwork.Train(200)
