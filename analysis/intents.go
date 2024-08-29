@@ -37,7 +37,7 @@ func GetIntents(locale string) []Intent {
 
 // SerializeIntents returns a list of intents retrieved from the given intents file
 func SerializeIntents(locale string) (_intents []Intent) {
-	err := json.Unmarshal(util.ReadFile("res/locales/"+locale+"/intents.json"), &_intents)
+	err := json.Unmarshal(util.FetchFileContent("res/locales/"+locale+"/intents.json"), &_intents)
 	if err != nil {
 		panic(err)
 	}

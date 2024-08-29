@@ -20,52 +20,52 @@ import (
 	"github.com/MehraB832/olivia_core/server"
 )
 
-var neuralNetworks = map[string]network.Network{}
+var neuralNetworksMapContainer = map[string]network.Network{}
 
 func main() {
-	port := flag.String("port", "8080", "The port for the API and WebSocket.")
-	localesFlag := flag.String("re-train", "", "The locale(s) to re-train.")
+	serverPortArg := flag.String("port", "8080", "The port for the API and WebSocket.")
+	localeRetrainArg := flag.String("re-train", "", "The locale(s) to re-train.")
 	flag.Parse()
 
-	// If the locales flag isn't empty then retrain the given models
-	if *localesFlag != "" {
-		reTrainModels(*localesFlag)
+	// If the localeRetrainArg isn't empty then retrain the given models
+	if *localeRetrainArg != "" {
+		executeModelRetraining(*localeRetrainArg)
 	}
 
-	// Print the Olivia ascii text
-	oliviaASCII := string(util.ReadFile("res/olivia-ascii.txt"))
-	fmt.Println(color.FgLightGreen.Render(oliviaASCII))
+	// Print the Olivia ASCII text
+	oliviaASCIIBanner := string(util.FetchFileContent("res/olivia-ascii.txt"))
+	fmt.Println(color.FgLightGreen.Render(oliviaASCIIBanner))
 
 	// Create the authentication token
 	dashboard.Authenticate()
 
-	for _, locale := range locales.Locales {
-		util.SerializeMessages(locale.Tag)
+	for _, individualLocale := range locales.Locales {
+		util.SerializeMessages(individualLocale.Tag)
 
-		neuralNetworks[locale.Tag] = training.CreateNeuralNetwork(
-			locale.Tag,
+		neuralNetworksMapContainer[individualLocale.Tag] = training.CreateNeuralNetwork(
+			individualLocale.Tag,
 			false,
 		)
 	}
 
 	// Get port from environment variables if there is
 	if os.Getenv("PORT") != "" {
-		*port = os.Getenv("PORT")
+		*serverPortArg = os.Getenv("PORT")
 	}
 
 	// Serves the server
-	server.Serve(neuralNetworks, *port)
+	server.Serve(neuralNetworksMapContainer, *serverPortArg)
 }
 
-// reTrainModels retrain the given locales
-func reTrainModels(localesFlag string) {
+// executeModelRetraining retrains the given locales
+func executeModelRetraining(localeRetrainList string) {
 	// Iterate locales by separating them by comma
-	for _, localeFlag := range strings.Split(localesFlag, ",") {
-		path := fmt.Sprintf("res/locales/%s/training.json", localeFlag)
-		err := os.Remove(path)
+	for _, individualLocale := range strings.Split(localeRetrainList, ",") {
+		trainingFilePath := fmt.Sprintf("res/locales/%s/training.json", individualLocale)
+		deleteError := os.Remove(trainingFilePath)
 
-		if err != nil {
-			fmt.Printf("Cannot re-train %s model.", localeFlag)
+		if deleteError != nil {
+			fmt.Printf("Cannot re-train %s model.", individualLocale)
 			return
 		}
 	}

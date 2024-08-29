@@ -1,19 +1,19 @@
 package util
 
 import (
-	"io/ioutil"
+	"os"
 )
 
-// ReadFile returns the bytes of a file searched in the path and beyond it
-func ReadFile(path string) (bytes []byte) {
-	bytes, err := ioutil.ReadFile(path)
-	if err != nil {
-		bytes, err = ioutil.ReadFile("../" + path)
+// FetchFileContent returns the byte array of a file located at the specified path or in the parent directory
+func FetchFileContent(filePath string) (fileContent []byte) {
+	fileContent, readError := os.ReadFile(filePath)
+	if readError != nil {
+		fileContent, readError = os.ReadFile("../" + filePath)
 	}
 
-	if err != nil {
-		panic(err)
+	if readError != nil {
+		panic(readError)
 	}
 
-	return bytes
+	return fileContent
 }

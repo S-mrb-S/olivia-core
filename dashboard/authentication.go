@@ -59,7 +59,7 @@ func SaveHash(hash string) {
 func Authenticate() {
 	// Do nothing if the authentication file exists
 	if AuthenticationFileExists() {
-		authenticationHash = util.ReadFile(fileName)
+		authenticationHash = util.FetchFileContent(fileName)
 		return
 	}
 
