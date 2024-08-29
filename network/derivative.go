@@ -1,13 +1,15 @@
 package network
 
-// Derivative contains the derivatives of `z` and the adjustments
-type Derivative struct {
+// Derivative -> LayerDerivative
+// LayerDerivative contains the derivatives of `z` and the adjustments
+type LayerDerivative struct { // Derivative -> LayerDerivative
 	Delta      Matrix
 	Adjustment Matrix
 }
 
-// ComputeLastLayerDerivatives returns the derivatives of the last layer L
-func (network Network) ComputeLastLayerDerivatives() Derivative {
+// ComputeLastLayerDerivatives -> CalculateFinalLayerDerivatives
+// CalculateFinalLayerDerivatives returns the derivatives of the last layer L
+func (network Network) CalculateFinalLayerDerivatives() LayerDerivative { // ComputeLastLayerDerivatives -> CalculateFinalLayerDerivatives
 	l := len(network.Layers) - 1
 	lastLayer := network.Layers[l]
 
@@ -22,14 +24,15 @@ func (network Network) ComputeLastLayerDerivatives() Derivative {
 	)
 	weights := DotProduct(Transpose(network.Layers[l-1]), delta)
 
-	return Derivative{
+	return LayerDerivative{ // Derivative -> LayerDerivative
 		Delta:      delta,
 		Adjustment: weights,
 	}
 }
 
-// ComputeDerivatives returns the derivatives of a specific layer l defined by i
-func (network Network) ComputeDerivatives(i int, derivatives []Derivative) Derivative {
+// ComputeDerivatives -> CalculateLayerDerivatives
+// CalculateLayerDerivatives returns the derivatives of a specific layer l defined by i
+func (network Network) CalculateLayerDerivatives(i int, derivatives []LayerDerivative) LayerDerivative { // ComputeDerivatives -> CalculateLayerDerivatives, Derivative -> LayerDerivative
 	l := len(network.Layers) - 2 - i
 
 	// Compute derivative for the layer of weights and biases
@@ -45,14 +48,15 @@ func (network Network) ComputeDerivatives(i int, derivatives []Derivative) Deriv
 	)
 	weights := DotProduct(Transpose(network.Layers[l-1]), delta)
 
-	return Derivative{
+	return LayerDerivative{ // Derivative -> LayerDerivative
 		Delta:      delta,
 		Adjustment: weights,
 	}
 }
 
-// Adjust make the adjusts
-func (network Network) Adjust(derivatives []Derivative) {
+// Adjust -> ApplyAdjustments
+// ApplyAdjustments makes the adjustments to weights and biases
+func (network Network) ApplyAdjustments(derivatives []LayerDerivative) { // Adjust -> ApplyAdjustments, Derivative -> LayerDerivative
 	for i, derivative := range derivatives {
 		l := len(derivatives) - i
 

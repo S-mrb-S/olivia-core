@@ -123,16 +123,16 @@ func (network *Network) Predict(input []float64) []float64 {
 
 // FeedBackward executes back propagation to adjust the weights for all the layers
 func (network *Network) FeedBackward() {
-	var derivatives []Derivative
-	derivatives = append(derivatives, network.ComputeLastLayerDerivatives())
+	var derivatives []LayerDerivative
+	derivatives = append(derivatives, network.CalculateFinalLayerDerivatives())
 
 	// Compute the derivatives of the hidden layers
 	for i := 0; i < len(network.Layers)-2; i++ {
-		derivatives = append(derivatives, network.ComputeDerivatives(i, derivatives))
+		derivatives = append(derivatives, network.CalculateLayerDerivatives(i, derivatives))
 	}
 
 	// Then adjust the weights and biases
-	network.Adjust(derivatives)
+	network.ApplyAdjustments(derivatives)
 }
 
 // ComputeError returns the average of all the errors after the training
