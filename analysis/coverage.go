@@ -13,7 +13,7 @@ import (
 var (
 	defaultModules  []modules.Module
 	defaultIntents  []Intent
-	defaultMessages []util.Message
+	defaultMessages []util.DataPacket
 )
 
 // LocaleCoverage is the element for the coverage of each language
@@ -45,7 +45,7 @@ func GetCoverage(writer http.ResponseWriter, _ *http.Request) {
 	writer.Header().Set("Access-Control-Expose-Headers", "Authorization")
 
 	defaultMessages, defaultIntents, defaultModules =
-		util.GetMessages("en"), GetIntents("en"), modules.GetModules("en")
+		util.RetrieveCachedMessages("en"), GetIntents("en"), modules.GetModules("en")
 
 	var coverage []LocaleCoverage
 
@@ -77,7 +77,7 @@ func getMessageCoverage(locale string) CoverageDetails {
 	// Iterate through the default messages which are the english ones to verify if a message isn't
 	// translated in the given locale.
 	for _, defaultMessage := range defaultMessages {
-		message := util.GetMessageByTag(defaultMessage.Tag, locale)
+		message := util.FindMessageByLabel(defaultMessage.Tag, locale)
 
 		// Add the current module tag to the list of not-covered-modules
 		if message.Tag != defaultMessage.Tag {

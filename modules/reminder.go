@@ -54,7 +54,7 @@ func ReminderGetterReplacer(locale, _, response, token string) (string, string) 
 	// Iterate through the reminders and parse them
 	for _, reminder := range reminders {
 		formattedReminder := fmt.Sprintf(
-			util.GetMessage(locale, "reminder"),
+			util.SelectRandomMessage(locale, "reminder"),
 			reminder.Reason,
 			reminder.Date,
 		)
@@ -63,7 +63,7 @@ func ReminderGetterReplacer(locale, _, response, token string) (string, string) 
 
 	// If no reminder has been found
 	if len(formattedReminders) == 0 {
-		return ReminderGetterTag, util.GetMessage(locale, "no reminders")
+		return ReminderGetterTag, util.SelectRandomMessage(locale, "no reminders")
 	}
 
 	return ReminderGetterTag, fmt.Sprintf(response, strings.Join(formattedReminders, " "))

@@ -104,7 +104,7 @@ func Reply(request RequestMessage) []byte {
 	// Send a message from res/datasets/messages.json if it is too long
 	if len(request.Content) > 500 {
 		responseTag = "too long"
-		responseSentence = util.GetMessage(request.Locale, responseTag)
+		responseSentence = util.SelectRandomMessage(request.Locale, responseTag)
 	} else {
 		// If the given locale is not supported yet, set english
 		locale := request.Locale

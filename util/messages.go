@@ -7,61 +7,67 @@ import (
 	"time"
 )
 
+// Message -> DataPacket
 // Message contains the message's tag and its contained matched sentences
-type Message struct {
-	Tag      string   `json:"tag"`
-	Messages []string `json:"messages"`
+type DataPacket struct {
+	Label   string   `json:"tag"`
+	Content []string `json:"messages"`
 }
 
-var messages = map[string][]Message{}
+// messages -> cachedDataStore
+var cachedDataStore = map[string][]DataPacket{}
 
+// SerializeMessages -> GenerateSerializedMessages
 // SerializeMessages serializes the content of `res/datasets/messages.json` in JSON
-func SerializeMessages(locale string) []Message {
-	var currentMessages []Message
-	err := json.Unmarshal(FetchFileContent("res/locales/"+locale+"/messages.json"), &currentMessages)
-	if err != nil {
-		fmt.Println(err)
+func GenerateSerializedMessages(region string) []DataPacket {
+	var parsedData []DataPacket
+	deserializationError := json.Unmarshal(FetchFileContent("res/locales/"+region+"/messages.json"), &parsedData)
+	if deserializationError != nil {
+		fmt.Println(deserializationError)
 	}
 
-	messages[locale] = currentMessages
+	cachedDataStore[region] = parsedData
 
-	return currentMessages
+	return parsedData
 }
 
+// GetMessages -> RetrieveCachedMessages
 // GetMessages returns the cached messages for the given locale
-func GetMessages(locale string) []Message {
-	return messages[locale]
+func RetrieveCachedMessages(region string) []DataPacket {
+	return cachedDataStore[region]
 }
 
+// GetMessageByTag -> FindMessageByLabel
 // GetMessageByTag returns a message found by the given tag and locale
-func GetMessageByTag(tag, locale string) Message {
-	for _, message := range messages[locale] {
-		if tag != message.Tag {
+func FindMessageByLabel(identifier, region string) DataPacket {
+	for _, item := range cachedDataStore[region] {
+		if identifier != item.Label {
 			continue
 		}
 
-		return message
+		return item
 	}
 
-	return Message{}
+	return DataPacket{}
 }
 
+// GetMessage -> SelectRandomMessage
 // GetMessage retrieves a message tag and returns a random message chose from res/datasets/messages.json
-func GetMessage(locale, tag string) string {
-	for _, message := range messages[locale] {
+func SelectRandomMessage(region, identifier string) string {
+	for _, item := range cachedDataStore[region] {
 		// Find the message with the right tag
-		if message.Tag != tag {
+		if item.Label != identifier {
 			continue
 		}
 
 		// Returns the only element if there aren't more
-		if len(message.Messages) == 1 {
-			return message.Messages[0]
+		if len(item.Content) == 1 {
+			return item.Content[0]
 		}
 
 		// Returns a random sentence
 		rand.Seed(time.Now().UnixNano())
-		return message.Messages[rand.Intn(len(message.Messages))]
+		return item.Content[rand.Intn(len(item.Content))]
 	}
 
 	return ""

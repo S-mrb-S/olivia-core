@@ -43,7 +43,7 @@ func CheckReminders(token, locale string) {
 		}
 
 		// Set the message with the current reminders
-		listRemindersMessage := util.GetMessage(locale, "list reminders")
+		listRemindersMessage := util.SelectRandomMessage(locale, "list reminders")
 		if listRemindersMessage == "" {
 			return
 		}

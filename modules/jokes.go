@@ -30,7 +30,7 @@ func JokesReplacer(locale, entry, response, _ string) (string, string) {
 	resp, err := http.Get(jokeURL)
 	if err != nil {
 		responseTag := "no jokes"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	defer resp.Body.Close()
@@ -38,7 +38,7 @@ func JokesReplacer(locale, entry, response, _ string) (string, string) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		responseTag := "no jokes"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	joke := &Joke{}
@@ -46,7 +46,7 @@ func JokesReplacer(locale, entry, response, _ string) (string, string) {
 	err = json.Unmarshal(body, joke)
 	if err != nil {
 		responseTag := "no jokes"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	jokeStr := joke.Setup + " " + joke.Punchline

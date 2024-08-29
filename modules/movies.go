@@ -30,7 +30,7 @@ func GenresReplacer(locale, entry, response, token string) (string, string) {
 	// If there is no genres then reply with a message from res/datasets/messages.json
 	if len(genres) == 0 {
 		responseTag := "no genres"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	// Change the user information to add the new genres
@@ -58,7 +58,7 @@ func MovieSearchReplacer(locale, entry, response, token string) (string, string)
 	// If there is no genres then reply with a message from res/datasets/messages.json
 	if len(genres) == 0 {
 		responseTag := "no genres"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	movie := language.SearchMovie(genres[0], token)
@@ -74,7 +74,7 @@ func MovieSearchFromInformationReplacer(locale, _, response, token string) (stri
 	genres := user.GetUserInformation(token).MovieGenres
 	if len(genres) == 0 {
 		responseTag := "no genres saved"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	movie := language.SearchMovie(genres[rand.Intn(len(genres))], token)

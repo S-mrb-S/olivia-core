@@ -5,9 +5,9 @@ import (
 )
 
 func TestSerializeMessages(t *testing.T) {
-	messages := SerializeMessages("en")
+	messages := GenerateSerializedMessages("en")
 
 	if len(messages) == 0 {
-		t.Errorf("SerializeMessages() failed.")
+		t.Errorf("GenerateSerializedMessages() failed.")
 	}
 }

@@ -40,7 +40,7 @@ func main() {
 	dashboard.Authenticate()
 
 	for _, individualLocale := range locales.Locales {
-		util.SerializeMessages(individualLocale.Tag)
+		util.GenerateSerializedMessages(individualLocale.Tag)
 
 		neuralNetworksMapContainer[individualLocale.Tag] = training.CreateNeuralNetwork(
 			individualLocale.Tag,

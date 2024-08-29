@@ -22,7 +22,7 @@ func RandomNumberReplacer(locale, entry, response, _ string) (string, string) {
 		}
 
 		responseTag := "no random range"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	min := limitArr[0]

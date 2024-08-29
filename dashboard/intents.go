@@ -93,7 +93,7 @@ func CreateIntent(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("Olivia-Token")
 	if !ChecksToken(token) {
 		json.NewEncoder(w).Encode(Error{
-			Message: util.GetMessage(data["locale"], "no permission"),
+			Message: util.SelectRandomMessage(data["locale"], "no permission"),
 		})
 		return
 	}
@@ -104,7 +104,7 @@ func CreateIntent(w http.ResponseWriter, r *http.Request) {
 
 	if intent.Responses == nil || intent.Patterns == nil {
 		json.NewEncoder(w).Encode(Error{
-			Message: util.GetMessage(data["locale"], "patterns same"),
+			Message: util.SelectRandomMessage(data["locale"], "patterns same"),
 		})
 		return
 	}
@@ -113,7 +113,7 @@ func CreateIntent(w http.ResponseWriter, r *http.Request) {
 	for _, _intent := range analysis.GetIntents(data["locale"]) {
 		if _intent.Tag == intent.Tag {
 			json.NewEncoder(w).Encode(Error{
-				Message: util.GetMessage(data["locale"], "tags same"),
+				Message: util.SelectRandomMessage(data["locale"], "tags same"),
 			})
 			return
 		}
@@ -139,7 +139,7 @@ func DeleteIntent(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("Olivia-Token")
 	if !ChecksToken(token) {
 		json.NewEncoder(w).Encode(Error{
-			Message: util.GetMessage(data["locale"], "no permission"),
+			Message: util.SelectRandomMessage(data["locale"], "no permission"),
 		})
 		return
 	}

@@ -28,7 +28,7 @@ func TestGetIntentCoverage(t *testing.T) {
 }
 
 func TestGetMessageCoverage(t *testing.T) {
-	defaultMessages = util.GetMessages("en")
+	defaultMessages = util.RetrieveCachedMessages("en")
 
 	coverage := getIntentCoverage("en")
 

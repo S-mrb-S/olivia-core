@@ -28,7 +28,7 @@ func SpotifySetterReplacer(locale, entry, _, token string) (string, string) {
 
 	// Returns if the token is empty
 	if len(spotifyTokens) != 2 {
-		return SpotifySetterTag, util.GetMessage(locale, "spotify tokens")
+		return SpotifySetterTag, util.SelectRandomMessage(locale, "spotify tokens")
 	}
 
 	// Save the tokens in the user's information
@@ -47,7 +47,7 @@ func SpotifySetterReplacer(locale, entry, _, token string) (string, string) {
 func SpotifyPlayerReplacer(locale, entry, response, token string) (string, string) {
 	// Return if the tokens are not set
 	if spotifyModule.CheckTokensPresence(token) {
-		return SpotifySetterTag, util.GetMessage(locale, "spotify credentials")
+		return SpotifySetterTag, util.SelectRandomMessage(locale, "spotify credentials")
 	}
 
 	// Renew the spotify token and get the client

@@ -22,7 +22,7 @@ func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 	resp, err := http.Get(adviceURL)
 	if err != nil {
 		responseTag := "no advices"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	defer resp.Body.Close()
@@ -30,7 +30,7 @@ func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		responseTag := "no advices"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	var result map[string]interface{}

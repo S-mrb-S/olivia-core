@@ -23,7 +23,7 @@ func NameGetterReplacer(locale, _, response, token string) (string, string) {
 
 	if strings.TrimSpace(name) == "" {
 		responseTag := "don't know name"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	return NameGetterTag, fmt.Sprintf(response, name)
@@ -37,7 +37,7 @@ func NameSetterReplacer(locale, entry, response, token string) (string, string) 
 	// If there is no name in the entry string
 	if name == "" {
 		responseTag := "no name"
-		return responseTag, util.GetMessage(locale, responseTag)
+		return responseTag, util.SelectRandomMessage(locale, responseTag)
 	}
 
 	// Capitalize the name
