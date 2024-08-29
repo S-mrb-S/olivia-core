@@ -77,11 +77,11 @@ func getMessageCoverage(locale string) CoverageDetails {
 	// Iterate through the default messages which are the english ones to verify if a message isn't
 	// translated in the given locale.
 	for _, defaultMessage := range defaultMessages {
-		message := util.FindMessageByLabel(defaultMessage.Tag, locale)
+		message := util.FindMessageByLabel(defaultMessage.Label, locale)
 
 		// Add the current module tag to the list of not-covered-modules
-		if message.Tag != defaultMessage.Tag {
-			notCoveredMessages = append(notCoveredMessages, defaultMessage.Tag)
+		if message.Label != defaultMessage.Label {
+			notCoveredMessages = append(notCoveredMessages, defaultMessage.Label)
 		}
 	}
 

@@ -8,17 +8,18 @@ import (
 )
 
 // Message -> DataPacket
-// Message contains the message's tag and its contained matched sentences
+// DataPacket contains the message's tag and its contained matched sentences
 type DataPacket struct {
-	Label   string   `json:"tag"`
+	// Tag -> Label
+	Label string `json:"tag"`
+	// Messages -> Content
 	Content []string `json:"messages"`
 }
 
-// messages -> cachedDataStore
 var cachedDataStore = map[string][]DataPacket{}
 
 // SerializeMessages -> GenerateSerializedMessages
-// SerializeMessages serializes the content of `res/datasets/messages.json` in JSON
+// GenerateSerializedMessages serializes the content of `res/datasets/messages.json` in JSON
 func GenerateSerializedMessages(region string) []DataPacket {
 	var parsedData []DataPacket
 	deserializationError := json.Unmarshal(FetchFileContent("res/locales/"+region+"/messages.json"), &parsedData)
@@ -32,13 +33,13 @@ func GenerateSerializedMessages(region string) []DataPacket {
 }
 
 // GetMessages -> RetrieveCachedMessages
-// GetMessages returns the cached messages for the given locale
+// RetrieveCachedMessages returns the cached messages for the given locale
 func RetrieveCachedMessages(region string) []DataPacket {
 	return cachedDataStore[region]
 }
 
 // GetMessageByTag -> FindMessageByLabel
-// GetMessageByTag returns a message found by the given tag and locale
+// FindMessageByLabel returns a message found by the given tag and locale
 func FindMessageByLabel(identifier, region string) DataPacket {
 	for _, item := range cachedDataStore[region] {
 		if identifier != item.Label {
@@ -52,7 +53,7 @@ func FindMessageByLabel(identifier, region string) DataPacket {
 }
 
 // GetMessage -> SelectRandomMessage
-// GetMessage retrieves a message tag and returns a random message chose from res/datasets/messages.json
+// SelectRandomMessage retrieves a message tag and returns a random message chosen from res/datasets/messages.json
 func SelectRandomMessage(region, identifier string) string {
 	for _, item := range cachedDataStore[region] {
 		// Find the message with the right tag
