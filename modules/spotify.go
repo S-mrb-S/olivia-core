@@ -32,9 +32,9 @@ func SpotifySetterReplacer(locale, entry, _, token string) (string, string) {
 	}
 
 	// Save the tokens in the user's information
-	user.ChangeUserInformation(token, func(information user.Information) user.Information {
-		information.SpotifyID = spotifyTokens[0]
-		information.SpotifySecret = spotifyTokens[1]
+	user.UpdateUserProfile(token, func(information user.UserProfile) user.UserProfile {
+		information.StreamingID = spotifyTokens[0]
+		information.StreamingSecret = spotifyTokens[1]
 
 		return information
 	})

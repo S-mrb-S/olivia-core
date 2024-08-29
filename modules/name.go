@@ -19,7 +19,7 @@ var (
 // NameGetterReplacer replaces the pattern contained inside the response by the user's name.
 // See modules/modules.go#Module.Replacer() for more details.
 func NameGetterReplacer(locale, _, response, token string) (string, string) {
-	name := user.GetUserInformation(token).Name
+	name := user.RetrieveUserProfile(token).FullName
 
 	if strings.TrimSpace(name) == "" {
 		responseTag := "don't know name"
@@ -44,8 +44,8 @@ func NameSetterReplacer(locale, entry, response, token string) (string, string) 
 	name = strings.Title(name)
 
 	// Change the name inside the user information
-	user.ChangeUserInformation(token, func(information user.Information) user.Information {
-		information.Name = name
+	user.UpdateUserProfile(token, func(information user.UserProfile) user.UserProfile {
+		information.FullName = name
 		return information
 	})
 

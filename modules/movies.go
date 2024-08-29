@@ -34,14 +34,14 @@ func GenresReplacer(locale, entry, response, token string) (string, string) {
 	}
 
 	// Change the user information to add the new genres
-	user.ChangeUserInformation(token, func(information user.Information) user.Information {
+	user.UpdateUserProfile(token, func(information user.UserProfile) user.UserProfile {
 		for _, genre := range genres {
 			// Append the genre only is it isn't already in the information
-			if util.SliceIncludes(information.MovieGenres, genre) {
+			if util.SliceIncludes(information.GenrePreferences, genre) {
 				continue
 			}
 
-			information.MovieGenres = append(information.MovieGenres, genre)
+			information.GenrePreferences = append(information.GenrePreferences, genre)
 		}
 		return information
 	})
@@ -71,7 +71,7 @@ func MovieSearchReplacer(locale, entry, response, token string) (string, string)
 // See modules/modules.go#Module.Replacer() for more details.
 func MovieSearchFromInformationReplacer(locale, _, response, token string) (string, string) {
 	// If there is no genres then reply with a message from res/datasets/messages.json
-	genres := user.GetUserInformation(token).MovieGenres
+	genres := user.RetrieveUserProfile(token).GenrePreferences
 	if len(genres) == 0 {
 		responseTag := "no genres saved"
 		return responseTag, util.SelectRandomMessage(locale, responseTag)

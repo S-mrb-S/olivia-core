@@ -94,7 +94,7 @@ func SerializeMovies() (movies []Movie) {
 // SearchMovie search a movie for a given genre
 func SearchMovie(genre, userToken string) (output Movie) {
 	for _, movie := range movies {
-		userMovieBlacklist := user.GetUserInformation(userToken).MovieBlacklist
+		userMovieBlacklist := user.RetrieveUserProfile(userToken).DislikedMovies
 		// Continue if the movie is not from the request genre or if this movie has already been suggested
 		if !util.SliceIncludes(movie.Genres, genre) || util.SliceIncludes(userMovieBlacklist, movie.Name) {
 			continue
@@ -106,8 +106,8 @@ func SearchMovie(genre, userToken string) (output Movie) {
 	}
 
 	// Add the found movie to the user blacklist
-	user.ChangeUserInformation(userToken, func(information user.Information) user.Information {
-		information.MovieBlacklist = append(information.MovieBlacklist, output.Name)
+	user.UpdateUserProfile(userToken, func(information user.UserProfile) user.UserProfile {
+		information.DislikedMovies = append(information.DislikedMovies, output.Name)
 		return information
 	})
 

@@ -30,14 +30,14 @@ type RequestMessage struct {
 	Content     string           `json:"content"`
 	Token       string           `json:"user_token"`
 	Locale      string           `json:"locale"`
-	Information user.Information `json:"information"`
+	Information user.UserProfile `json:"information"`
 }
 
 // ResponseMessage is the structure used to reply to the user through the websocket
 type ResponseMessage struct {
 	Content     string           `json:"content"`
 	Tag         string           `json:"tag"`
-	Information user.Information `json:"information"`
+	Information user.UserProfile `json:"information"`
 }
 
 // SocketHandle manages the entry connections and reply with the neural network
@@ -59,8 +59,8 @@ func SocketHandle(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Set the information from the client into the cache
-		if reflect.DeepEqual(user.GetUserInformation(request.Token), user.Information{}) {
-			user.SetUserInformation(request.Token, request.Information)
+		if reflect.DeepEqual(user.RetrieveUserProfile(request.Token), user.UserProfile{}) {
+			user.StoreUserProfile(request.Token, request.Information)
 		}
 
 		// If the type of requests is a handshake then execute the start modules
@@ -73,7 +73,7 @@ func SocketHandle(w http.ResponseWriter, r *http.Request) {
 				response := ResponseMessage{
 					Content:     message,
 					Tag:         "start module",
-					Information: user.GetUserInformation(request.Token),
+					Information: user.RetrieveUserProfile(request.Token),
 				}
 
 				bytes, err := json.Marshal(response)
@@ -121,7 +121,7 @@ func Reply(request RequestMessage) []byte {
 	response := ResponseMessage{
 		Content:     responseSentence,
 		Tag:         responseTag,
-		Information: user.GetUserInformation(request.Token),
+		Information: user.RetrieveUserProfile(request.Token),
 	}
 
 	bytes, err := json.Marshal(response)

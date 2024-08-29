@@ -3,20 +3,20 @@ package user
 import "testing"
 
 func TestUserInformation(t *testing.T) {
-	SetUserInformation("1", Information{
-		Name: "Hugo",
+	StoreUserProfile("1", UserProfile{
+		FullName: "Hugo",
 	})
 
-	if GetUserInformation("1").Name != "Hugo" {
-		t.Errorf("SetUserInformation and/or GetUserInformation failed.")
+	if RetrieveUserProfile("1").FullName != "Hugo" {
+		t.Errorf("SetUserInformation and/or RetrieveUserProfile failed.")
 	}
 
-	ChangeUserInformation("1", func(information Information) Information {
-		information.Name = "Steve"
+	UpdateUserProfile("1", func(information UserProfile) UserProfile {
+		information.FullName = "Steve"
 		return information
 	})
 
-	if GetUserInformation("1").Name != "Steve" {
+	if RetrieveUserProfile("1").FullName != "Steve" {
 		t.Errorf("ChangeUserInformation failed.")
 	}
 }

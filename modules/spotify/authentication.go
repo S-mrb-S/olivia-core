@@ -44,10 +44,10 @@ func init() {
 
 // LoginSpotify logins the user with its token to Spotify
 func LoginSpotify(locale, token string) string {
-	information := user.GetUserInformation(token)
+	information := user.RetrieveUserProfile(token)
 
 	// Generate the authentication url
-	auth.SetAuthInfo(information.SpotifyID, information.SpotifySecret)
+	auth.SetAuthInfo(information.StreamingID, information.StreamingSecret)
 	url := auth.AuthURL(state)
 
 	// Waits for the authentication to be completed, and save the client in user's information
@@ -56,17 +56,17 @@ func LoginSpotify(locale, token string) string {
 
 		// If the token is empty reset the credentials of the user
 		if *authenticationToken == (oauth2.Token{}) {
-			user.ChangeUserInformation(token, func(information user.Information) user.Information {
-				information.SpotifyID = ""
-				information.SpotifySecret = ""
+			user.UpdateUserProfile(token, func(information user.UserProfile) user.UserProfile {
+				information.StreamingID = ""
+				information.StreamingSecret = ""
 
 				return information
 			})
 		}
 
 		// Save the authentication token
-		user.ChangeUserInformation(token, func(information user.Information) user.Information {
-			information.SpotifyToken = authenticationToken
+		user.UpdateUserProfile(token, func(information user.UserProfile) user.UserProfile {
+			information.StreamingToken = authenticationToken
 
 			return information
 		})
@@ -78,13 +78,13 @@ func LoginSpotify(locale, token string) string {
 // RenewSpotifyToken renews the spotify token with the user's information token and returns
 // the spotify client.
 func RenewSpotifyToken(token string) spotify.Client {
-	authenticationToken := user.GetUserInformation(token).SpotifyToken
+	authenticationToken := user.RetrieveUserProfile(token).StreamingToken
 	client := auth.NewClient(authenticationToken)
 
 	// Renew the authentication token
 	if m, _ := time.ParseDuration("5m30s"); time.Until(authenticationToken.Expiry) < m {
-		user.ChangeUserInformation(token, func(information user.Information) user.Information {
-			information.SpotifyToken, _ = client.Token()
+		user.UpdateUserProfile(token, func(information user.UserProfile) user.UserProfile {
+			information.StreamingToken, _ = client.Token()
 			return information
 		})
 	}
@@ -94,8 +94,8 @@ func RenewSpotifyToken(token string) spotify.Client {
 
 // CheckTokensPresence checks if the spotify tokens are present
 func CheckTokensPresence(token string) bool {
-	information := user.GetUserInformation(token)
-	return information.SpotifyID == "" || information.SpotifySecret == ""
+	information := user.RetrieveUserProfile(token)
+	return information.StreamingID == "" || information.StreamingSecret == ""
 }
 
 // CompleteAuth completes the Spotify authentication.

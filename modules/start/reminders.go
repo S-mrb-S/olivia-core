@@ -18,17 +18,17 @@ func init() {
 
 // CheckReminders will check the dates of the user's reminder and if they are outdated, remove them
 func CheckReminders(token, locale string) {
-	reminders := user.GetUserInformation(token).Reminders
+	reminders := user.RetrieveUserProfile(token).ImportantDates
 	var messages []string
 
 	// Iterate through the reminders to check if they are outdated
 	for i, reminder := range reminders {
-		date, _ := time.Parse("01/02/2006 03:04", reminder.Date)
+		date, _ := time.Parse("01/02/2006 03:04", reminder.ReminderDate)
 
 		now := time.Now()
 		// If the date is today
 		if date.Year() == now.Year() && date.Day() == now.Day() && date.Month() == now.Month() {
-			messages = append(messages, fmt.Sprintf("“%s”", reminder.Reason))
+			messages = append(messages, fmt.Sprintf("“%s”", reminder.ReminderDetails))
 
 			// Removes the current reminder
 			RemoveUserReminder(token, i)
@@ -50,7 +50,7 @@ func CheckReminders(token, locale string) {
 
 		message := fmt.Sprintf(
 			listRemindersMessage,
-			user.GetUserInformation(token).Name,
+			user.RetrieveUserProfile(token).FullName,
 			strings.Join(messages, ", "),
 		)
 		SetMessage(message)
@@ -59,19 +59,19 @@ func CheckReminders(token, locale string) {
 
 // RemoveUserReminder removes the reminder at a specific index in the user's information
 func RemoveUserReminder(token string, index int) {
-	user.ChangeUserInformation(token, func(information user.Information) user.Information {
-		reminders := information.Reminders
+	user.UpdateUserProfile(token, func(information user.UserProfile) user.UserProfile {
+		reminders := information.ImportantDates
 
 		// Removes the element from the reminders slice
 		if len(reminders) == 1 {
-			reminders = []user.Reminder{}
+			reminders = []user.UserReminder{}
 		} else {
 			reminders[index] = reminders[len(reminders)-1]
 			reminders = reminders[:len(reminders)-1]
 		}
 
 		// Set the updated slice
-		information.Reminders = reminders
+		information.ImportantDates = reminders
 
 		return information
 	})

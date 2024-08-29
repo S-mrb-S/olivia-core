@@ -32,10 +32,10 @@ func ReminderSetterReplacer(locale, entry, response, token string) (string, stri
 	formattedDate := date.Format("01/02/2006 03:04")
 
 	// Add the reminder inside the user's information
-	user.ChangeUserInformation(token, func(information user.Information) user.Information {
-		information.Reminders = append(information.Reminders, user.Reminder{
-			Reason: reason,
-			Date:   formattedDate,
+	user.UpdateUserProfile(token, func(information user.UserProfile) user.UserProfile {
+		information.ImportantDates = append(information.ImportantDates, user.UserReminder{
+			ReminderDetails: reason,
+			ReminderDate:   formattedDate,
 		})
 
 		return information
@@ -48,15 +48,15 @@ func ReminderSetterReplacer(locale, entry, response, token string) (string, stri
 // response patterns by the current reminders
 // See modules/modules.go#Module.Replacer() for more details.
 func ReminderGetterReplacer(locale, _, response, token string) (string, string) {
-	reminders := user.GetUserInformation(token).Reminders
+	reminders := user.RetrieveUserProfile(token).ImportantDates
 	var formattedReminders []string
 
 	// Iterate through the reminders and parse them
 	for _, reminder := range reminders {
 		formattedReminder := fmt.Sprintf(
 			util.SelectRandomMessage(locale, "reminder"),
-			reminder.Reason,
-			reminder.Date,
+			reminder.ReminderDetails,
+			reminder.ReminderDate,
 		)
 		formattedReminders = append(formattedReminders, formattedReminder)
 	}
