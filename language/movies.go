@@ -96,7 +96,7 @@ func SearchMovie(genre, userToken string) (output Movie) {
 	for _, movie := range movies {
 		userMovieBlacklist := user.GetUserInformation(userToken).MovieBlacklist
 		// Continue if the movie is not from the request genre or if this movie has already been suggested
-		if !util.Contains(movie.Genres, genre) || util.Contains(userMovieBlacklist, movie.Name) {
+		if !util.SliceIncludes(movie.Genres, genre) || util.SliceIncludes(userMovieBlacklist, movie.Name) {
 			continue
 		}
 

@@ -19,7 +19,7 @@ func TrainData(locale string) (inputs, outputs [][]float64) {
 		bag := document.Sentence.WordsBag(words)
 
 		// Change value to 1 where there is the document Tag
-		outputRow[util.Index(classes, document.Tag)] = 1
+		outputRow[util.SliceIndex(classes, document.Tag)] = 1
 
 		// Append data to inputs and outputs
 		inputs = append(inputs, bag)

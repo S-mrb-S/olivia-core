@@ -37,7 +37,7 @@ func GenresReplacer(locale, entry, response, token string) (string, string) {
 	user.ChangeUserInformation(token, func(information user.Information) user.Information {
 		for _, genre := range genres {
 			// Append the genre only is it isn't already in the information
-			if util.Contains(information.MovieGenres, genre) {
+			if util.SliceIncludes(information.MovieGenres, genre) {
 				continue
 			}
 

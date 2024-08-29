@@ -95,7 +95,7 @@ func Organize(locale string) (words, classes []string, documents []Document) {
 			// Add each word to response
 			for _, word := range patternSentence.stem() {
 
-				if !util.Contains(words, word) {
+				if !util.SliceIncludes(words, word) {
 					words = append(words, word)
 				}
 			}

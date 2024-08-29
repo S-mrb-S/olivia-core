@@ -240,7 +240,7 @@ func RuleNaturalDate(locale, sentence string) time.Time {
 
 	// Put the month in english to parse the time with time golang package
 	if locale != "en" {
-		monthIndex := util.Index(RuleTranslations[locale].Months, month)
+		monthIndex := util.SliceIndex(RuleTranslations[locale].Months, month)
 		month = RuleTranslations["en"].Months[monthIndex]
 	}
 

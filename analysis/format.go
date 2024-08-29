@@ -49,7 +49,7 @@ func removeStopWords(locale string, words []string) []string {
 		}
 	}
 
-	return util.Difference(words, wordsToRemove)
+	return util.SliceDifference(words, wordsToRemove)
 }
 
 // tokenize returns a list of words that have been lower-cased
@@ -97,7 +97,7 @@ func (sentence Sentence) WordsBag(words []string) (bag []float64) {
 	for _, word := range words {
 		// Append 1 if the patternWords contains the actual word, else 0
 		var valueToAppend float64
-		if util.Contains(sentence.stem(), word) {
+		if util.SliceIncludes(sentence.stem(), word) {
 			valueToAppend = 1
 		}
 
